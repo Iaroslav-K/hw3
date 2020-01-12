@@ -77,21 +77,21 @@ class RomanjiTest extends FunSuite with Matchers {
   }
 
   test("big data test") {
-    val katakama = new StringBuilder()
+    val katakana = new StringBuilder()
     val distinctTranslation = new StringBuilder()
     for (_ <- 0 to 200) {
-      katakama.append("トイレ ")
+      katakana.append("トイレ ")
       distinctTranslation.append("toire ")
-      katakama.append("テレビ ")
+      katakana.append("テレビ ")
       distinctTranslation.append("terebi ")
-      katakama.append("ドラマ ")
+      katakana.append("ドラマ ")
       distinctTranslation.append("dorama ")
-      katakama.append("アイスクリーム ")
+      katakana.append("アイスクリーム ")
       distinctTranslation.append("aisukurīmu ")
-      katakama.append("ノック ")
+      katakana.append("ノック ")
       distinctTranslation.append("nokku ")
     }
-    romanji(katakama.toString()) shouldBe distinctTranslation.toString()
+    romanji(katakana.toString()) shouldBe distinctTranslation.toString()
   }
 
 }

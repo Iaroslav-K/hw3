@@ -47,9 +47,14 @@ object Main {
 
   }
 
-
+  /** The class gives opportunity to add any functionality to any Double that appears in this class.
+   *
+   * @param x some Double
+   */
   private implicit class MyDouble(x: Double) {
+
     def ^(b: Double): scala.Double = pow(x, b)
+
   }
 
 
@@ -76,9 +81,6 @@ object Main {
   }
 
   def romanji(katakana: String): String = {
-    val filter = {
-      "[!?\"\' ]".r
-    }
     katakana.foldLeft(List[Char]())(
       (acc, next) => {
         next match {
@@ -92,7 +94,7 @@ object Main {
             acc :+ next
           case _ if Katakana.symbols.contains(next) =>
             acc ++ Katakana.symbols(next)
-          case _ if filter.matches(next.toString) =>
+          case _ if "[!?\"' ]".r.matches(next.toString) =>
             acc :+ next
           case _ =>
             throw new IllegalArgumentException(s"Symbol $next is not supported")
