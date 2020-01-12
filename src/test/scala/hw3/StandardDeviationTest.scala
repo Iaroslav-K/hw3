@@ -4,6 +4,7 @@ import hw3.Main.standardDeviation
 import org.scalatest.{FunSuite, Matchers}
 
 class StandardDeviationTest extends FunSuite with Matchers {
+
   test("stddev example") {
     /**
      * x	                 4      9    11   12    17     5     8    12    14
@@ -15,6 +16,7 @@ class StandardDeviationTest extends FunSuite with Matchers {
      */
     standardDeviation(List(4, 9, 11, 12, 17, 5, 8, 12, 14)) shouldBe 3.93 +- 0.01
   }
+
   test("stddev singleton example") {
     /**
      * x	                  42
@@ -29,4 +31,5 @@ class StandardDeviationTest extends FunSuite with Matchers {
       standardDeviation(List[Double]())
     }.getMessage shouldBe "requirement failed: empty list"
   }
+
 }

@@ -5,15 +5,53 @@ import math._
 
 object Main {
 
-  implicit class MyDouble(x: Double) {
+  /** The container for symbol frequency.
+   *
+   * @param container immutable map of Char -> Int
+   */
+  private class LetterContainer(container: Map[Char, Int]) {
+
+    /** The leftmost letter in the ranking is the letter that occurs the most in the corpus.
+     * The rightmost letter in the ranking is the letter that occurs the least in the corpus.
+     * If two letters occur the same number of times, they are arranged alphabetically.
+     *
+     * @return sorted list of letters
+     */
+    private def sort: Seq[(Char, Int)] = {
+      container
+        .toList
+        .sortWith((x, y) => if (x._2 == y._2) x._1 < y._1 else x._2 > y._2)
+    }
+
+    /** Convert sorted sequence to string.
+     *
+     * @return string of letter by frequency
+     */
+    override def toString: String = {
+      sort.foldLeft("")((acc, x) => acc + x._1.toChar)
+    }
+
+    /** Increase letter frequency.
+     *
+     * @param char next letter
+     * @return edited LetterContainer
+     */
+    def add(char: Char): LetterContainer = {
+      if (container.contains(char)) {
+        new LetterContainer((container - char) + (char -> (container(char) + 1)))
+      } else {
+        new LetterContainer(container + (char -> 0))
+      }
+    }
+
+  }
+
+
+  private implicit class MyDouble(x: Double) {
     def ^(b: Double): scala.Double = pow(x, b)
   }
 
-  /** The method uses: `(1/n)*(sum(1)(n)(Xi - Xn))^2`
-   *
-   * @param vector list of numbers
-   * @return standard deviation of that vector
-   */
+
   def standardDeviation(vector: List[Double]): Double = {
     require(vector.nonEmpty, "empty list")
     val Xn = vector.sum / vector.size
@@ -24,7 +62,17 @@ object Main {
     ) / vector.size) ^ 0.5
   }
 
-  def letterFrequencyRanking(corpus: String): String = ???
+  def letterFrequencyRanking(corpus: String): String = {
+    corpus
+      .toLowerCase
+      .toList
+      .filter(_.isLetter)
+      .foldLeft(new LetterContainer(Map[Char, Int]()))(
+        (acc, letter) => {
+          acc.add(letter)
+        })
+      .toString
+  }
 
   def romanji(katakana: String): String = ???
 
