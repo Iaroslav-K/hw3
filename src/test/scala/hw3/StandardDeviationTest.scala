@@ -27,9 +27,9 @@ class StandardDeviationTest extends FunSuite with Matchers {
   }
 
   test("empty list") {
-    intercept[IllegalArgumentException] {
+    the[IllegalArgumentException] thrownBy {
       standardDeviation(List[Double]())
-    }.getMessage shouldBe "requirement failed: empty list"
+    } should have message "requirement failed: empty list"
   }
 
 }

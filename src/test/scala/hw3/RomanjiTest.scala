@@ -4,20 +4,6 @@ import hw3.Main.romanji
 import org.scalatest.{FunSuite, Matchers}
 
 class RomanjiTest extends FunSuite with Matchers {
-  val katakama = new StringBuilder()
-  val distinctTranslation = new StringBuilder()
-  for (_ <- 0 to 200) {
-    katakama.append("トイレ ")
-    distinctTranslation.append("toire ")
-    katakama.append("テレビ ")
-    distinctTranslation.append("terebi ")
-    katakama.append("ドラマ ")
-    distinctTranslation.append("dorama ")
-    katakama.append("アイスクリーム ")
-    distinctTranslation.append("aisukurīmu ")
-    katakama.append("ノック ")
-    distinctTranslation.append("nokku ")
-  }
 
   test("Toilet") {
     romanji("トイレ") shouldBe "toire"
@@ -44,9 +30,9 @@ class RomanjiTest extends FunSuite with Matchers {
   }
 
   test("wrong string with ャ/ュ/ョ") {
-    intercept[IllegalArgumentException] {
+    the[IllegalArgumentException] thrownBy {
       romanji("ノヤ")
-    }.getMessage shouldBe "requirement failed: 'i' symbol missing"
+    } should have message "requirement failed: 'i' symbol missing"
   }
 
   test("string with ッ") {
@@ -54,15 +40,15 @@ class RomanjiTest extends FunSuite with Matchers {
   }
 
   test("wrong string with ッ") {
-    intercept[IllegalArgumentException] {
+    the[IllegalArgumentException] thrownBy {
       romanji("サッ")
-    }.getMessage shouldBe "requirement failed: symbol \'ー\' can't doubles nothing"
+    } should have message "requirement failed: symbol \'ー\' can't doubles nothing"
   }
 
-  test("wrong string with \'ー\'") {
-    intercept[IllegalArgumentException] {
+  test("wrong string with ー") {
+    the[IllegalArgumentException] thrownBy {
       romanji("ール")
-    }.getMessage shouldBe "requirement failed: symbol \'ー\' can't lengthen nothing"
+    } should have message "requirement failed: symbol \'ー\' can't lengthen nothing"
   }
 
   test("string with ン") {
@@ -70,15 +56,42 @@ class RomanjiTest extends FunSuite with Matchers {
   }
 
   test("wrong string with ン") {
-    intercept[IllegalArgumentException] {
+    the[IllegalArgumentException] thrownBy {
       romanji("ナンサ")
-    }.getMessage shouldBe "requirement failed: symbol ン doubles the following consonant " +
+    } should have message "requirement failed: symbol ン doubles the following consonant " +
       "only in the case of na, ni, nu, ne, no syllables"
   }
 
-  test("big data test") {
-    romanji(katakama.toString()) shouldBe distinctTranslation.toString()
+  test("Empty text") {
+    romanji("") shouldBe ""
   }
 
+  test("String with other symbols") {
+    romanji("アイスクリーム!") shouldBe "aisukurīmu!"
+  }
+
+  test("illegal symbol") {
+    the[IllegalArgumentException] thrownBy {
+      romanji("アイスクリームa")
+    } should have message "Symbol a is not supported"
+  }
+
+  test("big data test") {
+    val katakama = new StringBuilder()
+    val distinctTranslation = new StringBuilder()
+    for (_ <- 0 to 200) {
+      katakama.append("トイレ ")
+      distinctTranslation.append("toire ")
+      katakama.append("テレビ ")
+      distinctTranslation.append("terebi ")
+      katakama.append("ドラマ ")
+      distinctTranslation.append("dorama ")
+      katakama.append("アイスクリーム ")
+      distinctTranslation.append("aisukurīmu ")
+      katakama.append("ノック ")
+      distinctTranslation.append("nokku ")
+    }
+    romanji(katakama.toString()) shouldBe distinctTranslation.toString()
+  }
 
 }

@@ -1,6 +1,7 @@
 package hw3
 
 import math._
+import scala.annotation.tailrec
 
 
 object Main {
@@ -75,6 +76,9 @@ object Main {
   }
 
   def romanji(katakana: String): String = {
+    val filter = {
+      "[!?\"\' ]".r
+    }
     katakana.foldLeft(List[Char]())(
       (acc, next) => {
         next match {
@@ -84,9 +88,14 @@ object Main {
           case 'ヤ' | 'ユ' | 'ヨ' =>
             require(acc.nonEmpty && acc.last == 'i', "\'i\' symbol missing")
             acc.dropRight(1) ++ Katakana.symbols(next)
-          case 'ン' | 'ッ' | ' ' =>
+          case 'ン' | 'ッ' =>
             acc :+ next
-          case _ => acc ++ Katakana.symbols(next)
+          case _ if Katakana.symbols.contains(next) =>
+            acc ++ Katakana.symbols(next)
+          case _ if filter.matches(next.toString) =>
+            acc :+ next
+          case _ =>
+            throw new IllegalArgumentException(s"Symbol $next is not supported")
         }
       }
     ).foldRight(List[Char]())(
@@ -95,17 +104,42 @@ object Main {
           case 'ン' =>
             require(acc.nonEmpty && acc.head == 'n', "symbol ン doubles the following consonant " +
               "only in the case of na, ni, nu, ne, no syllables")
-            acc.head::acc
+            acc.head :: acc
           case 'ッ' =>
             require(acc.nonEmpty, "symbol \'ー\' can't doubles nothing")
-            acc.head::acc
-          case _ => next::acc
+            acc.head :: acc
+          case _ => next :: acc
         }
       }
     ).mkString
   }
 
-  def gray(bits: Int): List[String] = ???
+  def gray(bits: Int): List[String] = {
+    if (bits < 1) {
+      throw new IllegalArgumentException("Number need at list one bit")
+    }
+
+    /** The functions generate GrayCode based on init list.
+     *
+     * @param init List("0", "1")
+     * @param n    amount of bits to be add
+     * @return GrayCode with n+1 bits
+     */
+    @tailrec
+    def generate(init: List[String], n: Int): List[String] = {
+      if (n == 0) {
+        init
+      } else {
+        generate(init.foldRight(List[String]())((x, acc) => ("0" + x) :: acc)
+          ::: init.reverse.foldRight(List[String]())((x, acc) => ("1" + x) :: acc), n - 1)
+      }
+
+    }
+
+    generate(List("0", "1"), bits - 1)
+
+  }
+
 }
 
 object Katakana {

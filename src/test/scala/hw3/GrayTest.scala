@@ -16,4 +16,11 @@ class GrayTest extends FunSuite with Matchers {
   test("Gray example 3 bits") {
     gray(3) shouldBe List("000", "001", "011", "010", "110", "111", "101", "100")
   }
+
+  test("GrayCode with illegal amount of bits") {
+    the[IllegalArgumentException] thrownBy {
+      gray(-1)
+    } should have message "Number need at list one bit"
+  }
+
 }
