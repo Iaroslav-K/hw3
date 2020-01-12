@@ -74,7 +74,36 @@ object Main {
       .toString
   }
 
-  def romanji(katakana: String): String = ???
+  def romanji(katakana: String): String = {
+    katakana.foldLeft(List[Char]())(
+      (acc, next) => {
+        next match {
+          case 'ー' =>
+            require(acc.nonEmpty, "symbol \'ー\' can't lengthen nothing")
+            acc.dropRight(1) :+ Katakana.longVowels(acc.last)
+          case 'ヤ' | 'ユ' | 'ヨ' =>
+            require(acc.nonEmpty && acc.last == 'i', "\'i\' symbol missing")
+            acc.dropRight(1) ++ Katakana.symbols(next)
+          case 'ン' | 'ッ' | ' ' =>
+            acc :+ next
+          case _ => acc ++ Katakana.symbols(next)
+        }
+      }
+    ).foldRight(List[Char]())(
+      (next, acc) => {
+        next match {
+          case 'ン' =>
+            require(acc.nonEmpty && acc.head == 'n', "symbol ン doubles the following consonant " +
+              "only in the case of na, ni, nu, ne, no syllables")
+            acc.head::acc
+          case 'ッ' =>
+            require(acc.nonEmpty, "symbol \'ー\' can't doubles nothing")
+            acc.head::acc
+          case _ => next::acc
+        }
+      }
+    ).mkString
+  }
 
   def gray(bits: Int): List[String] = ???
 }
